@@ -17,11 +17,58 @@ type RoomParams = {
   roomId: string;
 };
 
+type FirebaseQuestions = Record<
+  string,
+  {
+    author: {
+      name: string;
+      avatar: string;
+    };
+    content: string;
+    isAnswered: boolean;
+    isHighlighted: boolean;
+  }
+>;
+
+type Question = {
+  author: {
+    name: string;
+    avatar: string;
+  };
+  content: string;
+  isAnswered: boolean;
+  isHighlighted: boolean;
+};
+
 export const Room = () => {
   const { user } = useAuth();
   const { roomId } = useParams<RoomParams>();
 
+  const [title, setTitle] = React.useState('');
   const [newQuestion, setNewQuestion] = React.useState('');
+  const [questions, setQuestions] = React.useState<Question[]>([]);
+
+  React.useEffect(() => {
+    const roomRef = firebaseDatabase.ref(`/rooms/${roomId}`);
+
+    roomRef.on('value', (room) => {
+      const databaseRoom = room.val();
+      const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {};
+
+      const parsedQuestions = Object.entries(firebaseQuestions).map(
+        ([key, value]) => ({
+          id: key,
+          author: value.author,
+          content: value.content,
+          isAnswered: value.isAnswered,
+          isHighlighted: value.isHighlighted,
+        }),
+      );
+
+      setTitle(databaseRoom.title);
+      setQuestions(parsedQuestions.reverse());
+    });
+  }, [roomId]);
 
   const onSendQuestion = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -41,8 +88,8 @@ export const Room = () => {
           name: user.name,
           avatar: user.avatar,
         },
-        isHighlighted: false,
         isAnswered: false,
+        isHighlighted: false,
       };
 
       await firebaseDatabase.ref(`rooms/${roomId}/questions`).push(question);
@@ -65,8 +112,10 @@ export const Room = () => {
 
       <main>
         <div className="room-title">
-          <h1>Sala React</h1>
-          <span>4 perguntas</span>
+          <h1>Sala {title}</h1>
+          {questions.length ? (
+            <span>{questions.length} pergunta(s)</span>
+          ) : null}
         </div>
 
         <form onSubmit={(event) => onSendQuestion(event)}>
@@ -75,7 +124,7 @@ export const Room = () => {
             placeholder="O que você quer perguntar?"
             onChange={(event) => setNewQuestion(event.target.value)}
           />
-          
+
           <div className="form-footer">
             {user ? (
               <div className="user-info">
@@ -93,6 +142,8 @@ export const Room = () => {
             </Button>
           </div>
         </form>
+
+        {JSON.stringify(questions)}
       </main>
     </div>
   );
