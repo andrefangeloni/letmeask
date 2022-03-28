@@ -2,16 +2,16 @@ import React from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import logo from '../assets/images/logo.svg';
-import illustration from '../assets/images/illustration.svg';
+import logo from '../../assets/images/logo.svg';
+import illustration from '../../assets/images/illustration.svg';
 
-import { Button } from '../components/Buttons';
+import { Button } from '../../components/Buttons';
 
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
-import { firebaseDatabase } from '../services/firebase';
+import { firebaseDatabase } from '../../services/firebase';
 
-import '../styles/auth.scss';
+import './auth.scss';
 
 export const NewRoom = () => {
   const { user } = useAuth();

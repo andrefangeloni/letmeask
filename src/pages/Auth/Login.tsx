@@ -2,18 +2,19 @@ import React from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../assets/images/logo.svg';
-import google from '../assets/images/google-icon.svg';
-import illustration from '../assets/images/illustration.svg';
+import logo from '../../assets/images/logo.svg';
+import google from '../../assets/images/google-icon.svg';
+import illustration from '../../assets/images/illustration.svg';
 
-import { Button } from '../components/Buttons';
+import { Button } from '../../components/Buttons';
 
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
-import '../styles/auth.scss';
-import { firebaseDatabase } from '../services/firebase';
+import { firebaseDatabase } from '../../services/firebase';
 
-export const Home = () => {
+import './auth.scss';
+
+export const Login = () => {
   const navigate = useNavigate();
 
   const { user, onGoogleSignIn } = useAuth();
