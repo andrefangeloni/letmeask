@@ -1,4 +1,8 @@
+import React from 'react';
+
 import { useNavigate } from 'react-router-dom';
+
+import { AuthContext } from '../App';
 
 import logo from '../assets/images/logo.svg';
 import google from '../assets/images/google-icon.svg';
@@ -10,6 +14,16 @@ import '../styles/auth.scss';
 
 export const Home = () => {
   const navigate = useNavigate();
+
+  const { user, onGoogleSignIn } = React.useContext(AuthContext);
+
+  const onLogin = async () => {
+    if (!user) {
+      await onGoogleSignIn();
+    }
+
+    navigate('/rooms/new');
+  };
 
   return (
     <div id="page-auth">
@@ -25,10 +39,7 @@ export const Home = () => {
       <main>
         <div className="main-content">
           <img src={logo} alt="Letmeask" />
-          <button
-            className="create-room"
-            onClick={() => navigate('/rooms/new')}
-          >
+          <button className="create-room" onClick={() => onLogin()}>
             <img src={google} alt="Logo do Google" />
             Crie sua sala com o Google
           </button>
