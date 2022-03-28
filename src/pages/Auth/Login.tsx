@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '../../assets/images/logo.svg';
@@ -32,21 +33,21 @@ export const Login = () => {
   const onJoinRoom = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (roomCode.trim() === '') {
-      return;
-    }
-
     try {
+      if (roomCode.trim() === '') {
+        throw new Error('Digite o código da sala');
+      }
+
       const roomRef = await firebaseDatabase.ref(`rooms/${roomCode}`).get();
-  
+
       if (!roomRef.exists()) {
-        throw new Error('Room not found!');
+        throw new Error('Sala não encontrada');
       }
 
       navigate(`/rooms/${roomCode}`);
     } catch (e) {
       const error = e as Error;
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

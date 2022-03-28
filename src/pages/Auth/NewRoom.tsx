@@ -28,10 +28,12 @@ export const NewRoom = () => {
 
     const roomRef = firebaseDatabase.ref('rooms');
 
-    const firebaseRoom = await roomRef.push({
+    const room = {
       title: newRoom,
       authorId: user?.id,
-    });
+    };
+
+    const firebaseRoom = await roomRef.push(room);
 
     navigate(`/rooms/${firebaseRoom.key}`);
   };
