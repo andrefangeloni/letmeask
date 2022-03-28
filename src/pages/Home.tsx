@@ -1,8 +1,4 @@
-import React from 'react';
-
 import { useNavigate } from 'react-router-dom';
-
-import { AuthContext } from '../App';
 
 import logo from '../assets/images/logo.svg';
 import google from '../assets/images/google-icon.svg';
@@ -10,12 +6,14 @@ import illustration from '../assets/images/illustration.svg';
 
 import { Button } from '../components/Buttons';
 
+import { useAuth } from '../hooks/useAuth';
+
 import '../styles/auth.scss';
 
 export const Home = () => {
   const navigate = useNavigate();
 
-  const { user, onGoogleSignIn } = React.useContext(AuthContext);
+  const { user, onGoogleSignIn } = useAuth();
 
   const onLogin = async () => {
     if (!user) {
