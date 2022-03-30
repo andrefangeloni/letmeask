@@ -7,7 +7,7 @@ import logo from '../../assets/images/logo.svg';
 import google from '../../assets/images/google-icon.svg';
 import illustration from '../../assets/images/illustration.svg';
 
-import { Button } from '../../components/Buttons';
+import { Button } from '../../components/Button';
 
 import { useAuth } from '../../hooks/useAuth';
 

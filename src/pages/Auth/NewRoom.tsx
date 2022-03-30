@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.svg';
 import illustration from '../../assets/images/illustration.svg';
 
-import { Button } from '../../components/Buttons';
+import { Button } from '../../components/Button';
 
 import { useAuth } from '../../hooks/useAuth';
 
