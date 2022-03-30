@@ -10,6 +10,8 @@ import { Question } from '../../components/Question';
 import { RoomCode } from '../../components/RoomCode';
 
 import { useAuth } from '../../hooks/useAuth';
+import { useRoom } from '../../hooks/useRoom';
+
 import { firebaseDatabase } from '../../services/firebase';
 
 import './styles.scss';
@@ -18,59 +20,13 @@ type RoomParams = {
   roomId: string;
 };
 
-type FirebaseQuestions = Record<
-  string,
-  {
-    author: {
-      name: string;
-      avatar: string;
-    };
-    content: string;
-    isAnswered: boolean;
-    isHighlighted: boolean;
-  }
->;
-
-type QuestionType = {
-  id: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  content: string;
-  isAnswered: boolean;
-  isHighlighted: boolean;
-};
-
 export const Room = () => {
-  const { user } = useAuth();
   const { roomId } = useParams<RoomParams>();
 
-  const [title, setTitle] = React.useState('');
+  const { user } = useAuth();
+  const { title, questions } = useRoom({ roomId });
+
   const [newQuestion, setNewQuestion] = React.useState('');
-  const [questions, setQuestions] = React.useState<QuestionType[]>([]);
-
-  React.useEffect(() => {
-    const roomRef = firebaseDatabase.ref(`/rooms/${roomId}`);
-
-    roomRef.on('value', (room) => {
-      const databaseRoom = room.val();
-      const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {};
-
-      const parsedQuestions = Object.entries(firebaseQuestions).map(
-        ([key, value]) => ({
-          id: key,
-          author: value.author,
-          content: value.content,
-          isAnswered: value.isAnswered,
-          isHighlighted: value.isHighlighted,
-        }),
-      );
-
-      setTitle(databaseRoom.title);
-      setQuestions(parsedQuestions.reverse());
-    });
-  }, [roomId]);
 
   const onSendQuestion = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -130,6 +86,7 @@ export const Room = () => {
           <div className="form-footer">
             {user ? (
               <div className="user-info">
+                {console.log(user.avatar)}
                 <img src={user.avatar} alt={user.name} />
                 <span>{user.name}</span>
               </div>
