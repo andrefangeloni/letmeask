@@ -43,6 +43,10 @@ export const Login = () => {
       if (!roomRef.exists()) {
         throw new Error('Sala não encontrada');
       }
+      
+      if (roomRef.val().endedAt) {
+        throw new Error('Esta sala não está mais disponível');
+      }
 
       navigate(`/rooms/${roomCode}`);
     } catch (e) {
