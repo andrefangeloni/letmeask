@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useAuth } from './useAuth';
+
 import { firebaseDatabase } from '../services/firebase';
 
 type FirebaseQuestions = Record<
@@ -12,6 +14,12 @@ type FirebaseQuestions = Record<
     content: string;
     isAnswered: boolean;
     isHighlighted: boolean;
+    likes: Record<
+      string,
+      {
+        authorId: string;
+      }
+    >;
   }
 >;
 
@@ -22,8 +30,10 @@ type QuestionType = {
     avatar: string;
   };
   content: string;
+  likeCount: number;
   isAnswered: boolean;
   isHighlighted: boolean;
+  likeId: string | undefined;
 };
 
 type UseRoomProps = {
@@ -31,6 +41,8 @@ type UseRoomProps = {
 };
 
 export const useRoom = ({ roomId }: UseRoomProps) => {
+  const { user } = useAuth();
+
   const [title, setTitle] = React.useState('');
   const [questions, setQuestions] = React.useState<QuestionType[]>([]);
 
@@ -48,13 +60,19 @@ export const useRoom = ({ roomId }: UseRoomProps) => {
           content: value.content,
           isAnswered: value.isAnswered,
           isHighlighted: value.isHighlighted,
+          likeCount: Object.values(value.likes ?? {}).length,
+          likeId: Object.entries(value.likes ?? {}).find(
+            ([key, like]) => like.authorId === user?.id,
+          )?.[0],
         }),
       );
 
       setTitle(databaseRoom.title);
       setQuestions(parsedQuestions.reverse());
     });
-  }, [roomId]);
+
+    return () => roomRef.off('value');
+  }, [roomId, user]);
 
   return { title, questions };
 };
