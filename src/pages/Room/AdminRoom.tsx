@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 
 import logo from '../../assets/images/logo.svg';
+import check from '../../assets/images/check.svg';
+import answer from '../../assets/images/answer.svg';
 import deleteIcon from '../../assets/images/delete.svg';
 
 import { Button } from '../../components/Button';
@@ -29,6 +31,18 @@ export const AdminRoom = () => {
     });
 
     navigate('/');
+  };
+
+  const onAnswerQuestion = async (questionId: string) => {
+    await firebaseDatabase
+      .ref(`rooms/${roomId}/questions/${questionId}`)
+      .update({ isAnswered: true });
+  };
+
+  const onHighlightQuestion = async (questionId: string) => {
+    await firebaseDatabase
+      .ref(`rooms/${roomId}/questions/${questionId}`)
+      .update({ isHighlighted: true });
   };
 
   const onDeleteQuestion = async (questionId: string) => {
@@ -66,9 +80,29 @@ export const AdminRoom = () => {
           {questions.map((question) => (
             <Question
               key={question.id}
-              content={question.content}
               author={question.author}
+              content={question.content}
+              isAnswered={question.isAnswered}
+              isHighlighted={question.isHighlighted}
             >
+              {question.isAnswered ? null : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onAnswerQuestion(question.id)}
+                  >
+                    <img src={check} alt="Marcar pergunta como respondida" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onHighlightQuestion(question.id)}
+                  >
+                    <img src={answer} alt="Dar destaque à pergunta" />
+                  </button>
+                </>
+              )}
+
               <button
                 type="button"
                 onClick={() => onDeleteQuestion(question.id)}
